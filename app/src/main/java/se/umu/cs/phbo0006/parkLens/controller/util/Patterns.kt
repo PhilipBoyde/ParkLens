@@ -5,7 +5,6 @@ import se.umu.cs.phbo0006.parkLens.model.signs.ParkingRule
 
 
 val parkingSignPatterns = listOf(
-    // Payment related
     Regex("""(?i)\b(avgift|betala|betald)\b""") to SymbolType.PAID,
 
     // Time restrictions
