@@ -1,5 +1,6 @@
 package se.umu.cs.phbo0006.parkLens.view
 
+import android.view.Surface
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -48,9 +49,11 @@ fun FullScreenCameraView(
                     scaleType = PreviewView.ScaleType.FILL_CENTER
                 }
 
-                val preview = Preview.Builder().build().apply {
-                    setSurfaceProvider(previewView.surfaceProvider)
-                }
+                val preview = Preview.Builder()
+                    .setTargetRotation(Surface.ROTATION_0)
+                    .build().apply {
+                        surfaceProvider = previewView.surfaceProvider
+                    }
 
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                 val cameraProvider = cameraProviderFuture.get()
