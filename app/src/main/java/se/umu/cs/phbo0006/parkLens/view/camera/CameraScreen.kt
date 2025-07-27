@@ -1,7 +1,9 @@
-package se.umu.cs.phbo0006.parkLens.view
+package se.umu.cs.phbo0006.parkLens.view.camera
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,7 +16,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -28,8 +29,6 @@ import se.umu.cs.phbo0006.parkLens.model.signs.BlockInfo
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.TextColor
 import java.util.concurrent.Executors
 import android.view.Surface
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.ui.input.pointer.pointerInput
 import se.umu.cs.phbo0006.parkLens.model.signs.SignType
 
 @Composable
@@ -44,10 +43,12 @@ fun CameraScreen() {
         )
     }
 
+    var debugMode by remember { mutableStateOf(false) }
     var isProcessing by remember { mutableStateOf(false) }
     var capturedBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var blockInfos by remember { mutableStateOf<List<BlockInfo>>(emptyList()) }
     var recognizedText by remember { mutableStateOf<String?>(null) }
+    var currentLanguage by remember { mutableStateOf("English") }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -65,22 +66,36 @@ fun CameraScreen() {
         if (!hasPermission) launcher.launch(Manifest.permission.CAMERA)
     }
     if (isProcessing){
-        LoadingScreen()
+        _root_ide_package_.se.umu.cs.phbo0006.parkLens.view.LoadingScreen()
     }else if (capturedBitmap != null) {
-        ImagePreviewScreen(
-            bitmap = capturedBitmap!!,
-            blockInfos = blockInfos,
-            recognizedText = recognizedText,
-            onBackToCamera = {
-                capturedBitmap = null
-                blockInfos = emptyList()
-                recognizedText = null
-            }
-        )
+
+        if (!debugMode){
+            _root_ide_package_.se.umu.cs.phbo0006.parkLens.view.ColorBlocksScreen(
+                blockInfos,
+                onTakeNewPhoto = {
+                    capturedBitmap = null
+                    blockInfos = emptyList()
+                },
+                onContinue = {} //Todo analyze the sign
+            )
+        }else {
+            ImagePreviewScreen(
+                bitmap = capturedBitmap!!,
+                blockInfos = blockInfos,
+                recognizedText = recognizedText,
+                onBackToCamera = {
+                    capturedBitmap = null
+                    blockInfos = emptyList()
+                    recognizedText = null
+                }
+            )
+        }
 
     } else if (hasPermission) {
         FullScreenCameraView(
             imageCapture = imageCapture,
+            debugMode = debugMode,
+            onDebugModeChange = { debugMode = it },
             onCaptureClick = {
                 isProcessing = true
                 simpleCapture(
@@ -94,10 +109,15 @@ fun CameraScreen() {
                     },
                     onComplete = { isProcessing = false }
                 )
+            },
+            selectedLanguage = currentLanguage,
+            onLanguageSelected = { newLang ->
+                currentLanguage = newLang
+                // TODO: language change logic
             }
         )
     } else {
-        PermissionDeniedScreen()
+        _root_ide_package_.se.umu.cs.phbo0006.parkLens.view.CameraPermissionDeniedScreen()
     }
 }
 
@@ -113,12 +133,21 @@ private fun simpleCapture(
             override fun onCaptureSuccess(image: ImageProxy) {
                 try {
                     val bitmap = image.toBitmap()
-                    val imageBitmap = bitmap.asImageBitmap()
-                    TextRecognition.recognizeTextFromImage(image) { blockInfos, text ->
+                    val rotationDegrees = image.imageInfo.rotationDegrees.toFloat()
+
+                    val rotatedBitmap = if (rotationDegrees != 0f) {
+                        rotateBitmap(bitmap, rotationDegrees)
+                    } else {
+                        bitmap
+                    }
+
+                    val imageBitmap = rotatedBitmap.asImageBitmap()
+                    TextRecognition.recognizeTextFromImage(bitmap) { blockInfos, text ->
                         onPhotoCaptured(imageBitmap, blockInfos)
                         onTextRecognized(text)
                         onComplete()
                     }
+
                 } catch (e: Exception) {
                     Log.e("Camera", "Processing error", e)
                     onComplete()
@@ -135,18 +164,14 @@ private fun simpleCapture(
     )
 }
 
-@Composable
-fun LoadingScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.7f))
-            .pointerInput(Unit) { detectTapGestures {} },
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(color = Color.White)
+private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
+    val matrix = Matrix().apply {
+        postRotate(degrees)
     }
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
+
+
 
 @Composable
 fun ImagePreviewScreen(
@@ -166,8 +191,7 @@ fun ImagePreviewScreen(
             bitmap = bitmap,
             contentDescription = "Captured image",
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.5f),
+                .fillMaxWidth(0.25f),
             contentScale = ContentScale.Fit
         )
 
@@ -236,14 +260,3 @@ fun ImagePreviewScreen(
     }
 }
 
-@Composable
-fun PermissionDeniedScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Camera permission is required", color = Color.White)
-    }
-}

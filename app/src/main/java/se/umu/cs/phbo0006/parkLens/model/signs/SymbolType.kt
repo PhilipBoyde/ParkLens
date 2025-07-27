@@ -1,11 +1,8 @@
-package se.umu.cs.phbo0006.parkLens.model
+package se.umu.cs.phbo0006.parkLens.model.signs
 
 enum class SymbolType {
     PAID,
-    FREE,
-    NO_PARKING,
-    ALLOWED_PARKING,
-    RESTRICTED,
+    PARKING,
 
     WEEKDAY,
     PRE_HOLIDAY,
@@ -15,4 +12,3 @@ enum class SymbolType {
 
     UNKNOWN
 }
-
