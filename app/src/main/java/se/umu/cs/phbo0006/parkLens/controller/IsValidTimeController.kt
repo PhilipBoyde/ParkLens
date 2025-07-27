@@ -1,7 +1,7 @@
 package se.umu.cs.phbo0006.parkLens.controller
 
 import se.umu.cs.phbo0006.parkLens.model.holiday.Holiday
-import se.umu.cs.phbo0006.parkLens.model.SymbolType
+import se.umu.cs.phbo0006.parkLens.model.signs.SymbolType
 import se.umu.cs.phbo0006.parkLens.model.signs.ParkingRule
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -1,9 +1,8 @@
 package se.umu.cs.phbo0006.parkLens.model.signs
 
-import se.umu.cs.phbo0006.parkLens.model.SymbolType
-
 data class ParkingRule(
-    val startHour: Int,
-    val endHour: Int,
-    val type: SymbolType
+    val text: String,
+    var type: SymbolType,
+    val startHour: Int = -1,
+    val endHour: Int = -1,
 )

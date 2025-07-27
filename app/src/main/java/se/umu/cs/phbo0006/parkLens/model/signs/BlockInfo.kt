@@ -5,5 +5,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 data class BlockInfo(
     val text: String,
     val croppedImage: ImageBitmap?,
-    val color: SignType
+    val color: SignType,
+    val rules: List<ParkingRule>
 )

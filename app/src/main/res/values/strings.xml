@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">ParkLens</string>
+    <string name="app_name" translatable="false">ParkLens</string>
+    <string name="loading_screen">Analyzing signs</string>
+    <string name="camera_permission_denied">Camera permission is required</string>
+    <string name="language">Language</string>
+    <string name="debug_mode">Debug Mode</string>
+    <string name="settings_title">Settings Menu</string>
 </resources>
