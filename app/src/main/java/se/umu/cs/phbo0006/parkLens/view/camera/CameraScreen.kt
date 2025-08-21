@@ -29,7 +29,12 @@ import se.umu.cs.phbo0006.parkLens.model.signs.BlockInfo
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.TextColor
 import java.util.concurrent.Executors
 import android.view.Surface
+import se.umu.cs.phbo0006.parkLens.controller.checkIfAllowedToPark
 import se.umu.cs.phbo0006.parkLens.model.signs.SignType
+import se.umu.cs.phbo0006.parkLens.view.CameraPermissionDeniedScreen
+import se.umu.cs.phbo0006.parkLens.view.ParkingRulesScreen
+import se.umu.cs.phbo0006.parkLens.view.ColorBlocksScreen
+import se.umu.cs.phbo0006.parkLens.view.LoadingScreen
 
 @Composable
 fun CameraScreen() {
@@ -49,6 +54,9 @@ fun CameraScreen() {
     var blockInfos by remember { mutableStateOf<List<BlockInfo>>(emptyList()) }
     var recognizedText by remember { mutableStateOf<String?>(null) }
     var currentLanguage by remember { mutableStateOf("English") }
+
+    var showParkingRules by remember { mutableStateOf(false) }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -66,18 +74,30 @@ fun CameraScreen() {
         if (!hasPermission) launcher.launch(Manifest.permission.CAMERA)
     }
     if (isProcessing){
-        _root_ide_package_.se.umu.cs.phbo0006.parkLens.view.LoadingScreen()
-    }else if (capturedBitmap != null) {
+        LoadingScreen()
+    } else if (showParkingRules){
+
+        ParkingRulesScreen(
+            checkIfAllowedToPark(blockInfos),
+            //TODO -back button -notify button
+        )
+
+    } else if (capturedBitmap != null) {
 
         if (!debugMode){
-            _root_ide_package_.se.umu.cs.phbo0006.parkLens.view.ColorBlocksScreen(
+            ColorBlocksScreen(
                 blockInfos,
                 onTakeNewPhoto = {
                     capturedBitmap = null
                     blockInfos = emptyList()
+                    showParkingRules = false
                 },
-                onContinue = {} //Todo analyze the sign
+                onContinue = {
+                    showParkingRules = true
+                }
             )
+
+
         }else {
             ImagePreviewScreen(
                 bitmap = capturedBitmap!!,
@@ -117,9 +137,11 @@ fun CameraScreen() {
             }
         )
     } else {
-        _root_ide_package_.se.umu.cs.phbo0006.parkLens.view.CameraPermissionDeniedScreen()
+        CameraPermissionDeniedScreen()
     }
 }
+
+
 
 private fun simpleCapture(
     imageCapture: ImageCapture,

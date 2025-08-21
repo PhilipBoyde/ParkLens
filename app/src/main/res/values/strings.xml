@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name" translatable="false">ParkLens</string>
-    <string name="loading_screen">Analyzing signs</string>
+    <string name="loading_screen">Recreating signs</string>
     <string name="camera_permission_denied">Camera permission is required</string>
     <string name="language">Language</string>
     <string name="debug_mode">Debug Mode</string>
     <string name="settings_title">Settings Menu</string>
+    <string name="parking_allowed">Parking is allowed</string>
+    <string name="parking_not_allowed">Parking is not allowed</string>
+    <string name="paid_parking_whole_day">Paid parking for the whole day</string>
+    <string name="paid_parking_not_whole_day">Paid parking for limited hours</string>
+    <string name="reminder">Set reminder</string>
 </resources>

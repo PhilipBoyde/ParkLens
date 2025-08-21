@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.BackgroundColor
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.ParkingBlue
 
 @Composable
 fun FullScreenCameraView(
@@ -206,11 +207,20 @@ fun FullScreenCameraView(
                 IconButton(
                     onClick = { scope.launch { drawerState.open() } },
                     modifier = Modifier
+                        //.align(Alignment.TopStart)
+                        .statusBarsPadding()
                         .align(Alignment.TopStart)
                         .padding(16.dp)
-                        .statusBarsPadding()
-                        .size(48.dp)
+                        .size(50.dp)
+                        .background(
+                            color = ParkingBlue.copy(alpha = 0.4f),
+                            shape = CircleShape
+                        )
                         .clip(CircleShape)
+                        //.padding(16.dp)
+                        //.statusBarsPadding()
+                       // .size(48.dp)
+                        //.clip(CircleShape)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.settings_icon),

@@ -1,7 +1,12 @@
 <resources>
-    <string name="loading_screen">Analyserar skyltar</string>
+    <string name="loading_screen">Återskapar skyltar</string>
     <string name="camera_permission_denied">Kameratillstånd krävs</string>
     <string name="language">Språk</string>
     <string name="debug_mode">Felsökningsläge</string>
     <string name="settings_title">Inställningar</string>
+    <string name="parking_allowed">Parkering tillåten</string>
+    <string name="parking_not_allowed">Parkering inte tillåten</string>
+    <string name="paid_parking_whole_day">Betald parkering för hela dagen</string>
+    <string name="paid_parking_not_whole_day">Betald parkering under begränsade tider</string>
+    <string name="reminder">Ställ in påminnelse</string>
 </resources>

@@ -23,6 +23,12 @@ import androidx.compose.ui.unit.sp
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.BackgroundColor
 import se.umu.cs.phbo0006.parkLens.R
 
+/**
+ * Represents a loading screen UI element.
+ *
+ * This composable function creates a loading screen with a background,
+ * circular progress indicator, and a loading message.
+ */
 @Composable
 fun LoadingScreen() {
     Box(

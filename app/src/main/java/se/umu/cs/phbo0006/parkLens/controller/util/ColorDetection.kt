@@ -9,6 +9,15 @@ import org.opencv.imgproc.Imgproc
 import org.opencv.android.Utils
 import se.umu.cs.phbo0006.parkLens.model.signs.SignType
 
+/**
+ * Detects the dominant color in a bitmap, representing a parking sign.
+ * This function performs histogram equalization and then identifies the dominant colors (blue and yellow)
+ * based on their pixel ratios. It's designed for identifying parking signs color.
+ *
+ * @param bitmap The bitmap to analyze.
+ * @return The dominant SignType (SignType.BLUE, SignType.YELLOW, or SignType.UNKNOWN)
+ *         based on the detected color ratios.
+ */
 fun detectBlockColor(bitmap: Bitmap): SignType {
     val (channels, mat, hsvMat) = histogramEqualization(bitmap)
 
@@ -45,6 +54,17 @@ fun detectBlockColor(bitmap: Bitmap): SignType {
     }
 }
 
+/**
+ * Performs histogram equalization on a given bitmap.
+ * This function converts the bitmap to HSV color space, equalizes the value channel
+ * (which represents brightness), and then merges the channels back into an HSV bitmap.
+ *
+ * @param bitmap The bitmap to perform histogram equalization on.
+ * @return A Triple containing:
+ *         - The list of Mat channels after splitting.
+ *         - The original Mat bitmap after conversion.
+ *         - The Mat bitmap after histogram equalization.
+ */
 private fun histogramEqualization(bitmap: Bitmap) : Triple<List<Mat>, Mat, Mat> {
     val mat = Mat()
     Utils.bitmapToMat(bitmap, mat)
@@ -62,6 +82,15 @@ private fun histogramEqualization(bitmap: Bitmap) : Triple<List<Mat>, Mat, Mat> 
 }
 
 
+/**
+ * Checks if a bitmap contains red text.
+ * This function converts the bitmap to an HSV color space, identifies red hues,
+ * and calculates the ratio of red pixels to the total number of pixels.
+ *
+ * @param bitmap The bitmap to analyze.
+ * @return True if the bitmap contains a significant amount of red text (ratio > 0.01),
+ *         false otherwise.
+ */
 fun checkForRedText(bitmap: Bitmap): Boolean{
     val bgrMat = Mat()
     Utils.bitmapToMat(bitmap, bgrMat)
