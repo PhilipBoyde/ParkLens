@@ -13,6 +13,8 @@ mlkit-text-recognition = "16.0.1"
 camerax = "1.4.2"
 gson = "2.13.1"
 opencv = "4.12.0"
+navigation = "2.9.3"
+lifecycle = "2.9.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +39,8 @@ camerax-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref =
 camerax-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 opencv = { module = "org.opencv:opencv", version.ref = "opencv" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

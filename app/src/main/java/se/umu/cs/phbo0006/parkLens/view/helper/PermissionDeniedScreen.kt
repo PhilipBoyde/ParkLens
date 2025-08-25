@@ -1,4 +1,4 @@
-package se.umu.cs.phbo0006.parkLens.view
+package se.umu.cs.phbo0006.parkLens.view.helper
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

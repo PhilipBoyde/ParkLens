@@ -109,9 +109,6 @@ class TextRecognition {
 
             }
 
-            //val restricted = isRestrictedNow(rules)
-            //resultText.append("\n${if (restricted) "🚫 Cannot park now" else "✅ Parking allowed"}\n")
-
             return blockInfos to resultText.toString()
         }
 

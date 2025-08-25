@@ -8,6 +8,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import se.umu.cs.phbo0006.parkLens.model.holiday.HolidayRepository
+import java.time.DayOfWeek
 
 /**
  * Determines if a parking time is valid based on a provided parking rule and the current time.
@@ -22,35 +23,41 @@ import se.umu.cs.phbo0006.parkLens.model.holiday.HolidayRepository
  */
 fun t6TimeIndication(
     rule: ParkingRule,
-    now: LocalDateTime = LocalDateTime.of(2025, 4, 1,16, 13, 30), // TEST
-
+    now: LocalDateTime = LocalDateTime.of(2025, 5, 2, 12, 20, 10), // TEST
 ): Boolean {
     val hour = now.hour
     val date = now.toLocalDate()
+    val dayOfWeek = date.dayOfWeek
 
     Log.e("hour", hour.toString())
     Log.e("start and end", "Start: ${rule.startHour}, END: ${rule.endHour}")
 
     val holidays = HolidayRepository.holidays
     val isHoliday = isHoliday(date, holidays)
-    val isPreHoliday = holidays.any {
-        it.date == date.plusDays(1).format(DateTimeFormatter.ISO_DATE)
-    }
-    var matched = false
+    val isSunday = dayOfWeek == DayOfWeek.SUNDAY
+    val isSaturday = dayOfWeek == DayOfWeek.SATURDAY
+    val isWeekday = dayOfWeek in DayOfWeek.MONDAY..DayOfWeek.FRIDAY
+
+    // Check if tomorrow is a holiday (for pre-holiday logic)
+    val tomorrowIsHoliday = isHoliday(date.plusDays(1), holidays)
+
 
     val applies = when (rule.type) {
-        SymbolType.WEEKDAY -> !isHoliday && !isPreHoliday
-        SymbolType.PRE_HOLIDAY -> isPreHoliday
-        SymbolType.HOLIDAY -> isHoliday
+        SymbolType.WEEKDAY -> {  isWeekday } // (Mon-Fri)
+        SymbolType.PRE_HOLIDAY -> { isSaturday || tomorrowIsHoliday } // Saturday OR day before a holiday
+        SymbolType.HOLIDAY -> { isHoliday || isSunday } // holiday OR Sunday
         else -> false
     }
 
-    if (applies && hour in rule.startHour until rule.endHour) {
-        matched = true
+    if (!applies) {
+        return false
     }
 
+    if (hour !in rule.startHour until rule.endHour) {
+        return false
+    }
 
-    return matched
+    return true
 }
 
 

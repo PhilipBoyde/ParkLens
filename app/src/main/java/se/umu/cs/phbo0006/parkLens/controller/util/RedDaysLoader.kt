@@ -14,13 +14,19 @@ import java.io.InputStreamReader
  * @return A list of Holiday objects representing the red days (holidays) from 2025 to 2050.
  *         Returns an empty list if the file is not found or if there is an error parsing the JSON.
  */
-fun loadRedDays(context: Context): List<Holiday> {
-        val inputStream = context.assets.open("swedish_red_days_2025_2050.json")
-        val reader = InputStreamReader(inputStream, "UTF-8")
+class RedDaysLoader {
+        companion object {
+                fun loadRedDays(context: Context): List<Holiday> {
+                        val inputStream = context.assets.open("swedish_red_days_2025_2050.json")
+                        val reader = InputStreamReader(inputStream, "UTF-8")
 
-        val holidayListType = object : TypeToken<List<Holiday>>() {}.type
-        val holidays: List<Holiday> = Gson().fromJson(reader, holidayListType)
+                        val holidayListType = object : TypeToken<List<Holiday>>() {}.type
+                        val holidays: List<Holiday> = Gson().fromJson(reader, holidayListType)
 
-        reader.close()
-        return holidays
+                        reader.close()
+                        return holidays
+                }
+        }
 }
+
+

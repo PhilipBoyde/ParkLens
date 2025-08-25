@@ -21,6 +21,7 @@ fun checkIfAllowedToPark(blockInfos: List<BlockInfo>) : Rules {
             when(it.type){
                 SymbolType.PAID -> paidParkingHoleDay = t16Fee(blockSize)
                 SymbolType.WEEKDAY,SymbolType.PRE_HOLIDAY, SymbolType.HOLIDAY -> {
+
                     if (blockColor == SignType.YELLOW){
                         restrictedParking = t6TimeIndication(it)
                     }else{

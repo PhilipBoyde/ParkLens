@@ -1,9 +1,11 @@
-package se.umu.cs.phbo0006.parkLens.view
+package se.umu.cs.phbo0006.parkLens.view.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import se.umu.cs.phbo0006.parkLens.model.Rules
 import se.umu.cs.phbo0006.parkLens.R
 
@@ -26,13 +29,11 @@ import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParking
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParkingBorder
 
 @Composable
-fun ParkingRulesScreen(
+fun ParkingRulePage(
     rules: Rules,
     onBack: () -> Unit = {},
     onNotifyTimeUp: () -> Unit = {}
-
 ) {
-    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -51,23 +52,26 @@ fun ParkingRulesScreen(
                     color = ParkingBlue.copy(alpha = 0.5f),
                     shape = CircleShape
                 )
+                .zIndex(10f)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.back_arrow),
+                painter = painterResource(id = R.drawable.close),
                 contentDescription = "Back",
                 tint = TextColor,
                 modifier = Modifier.size(32.dp)
             )
         }
 
+        // Scrollable content
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp)
+                .padding(bottom = if (rules.allowedToPark) 120.dp else 0.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             // Parking Status
             Card(
                 modifier = Modifier
@@ -124,7 +128,7 @@ fun ParkingRulesScreen(
                         .padding(bottom = 32.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (rules.paidParkingHoleDay == true)
+                        containerColor = if (rules.paidParkingHoleDay)
                             RestrictedParkingBorder
                         else
                             RestrictedParking
@@ -141,42 +145,48 @@ fun ParkingRulesScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
-                            painter = if (rules.paidParkingHoleDay){
+                            painter = if (rules.paidParkingHoleDay) {
                                 painterResource(id = R.drawable.monetization)
-                            }else{
+                            } else {
                                 painterResource(id = R.drawable.time_based_parking)
                             },
-
-
                             contentDescription = null,
-                            tint = if (rules.paidParkingHoleDay == true) Color.White else Color.Black,
+                            tint = if (rules.paidParkingHoleDay) Color.White else Color.Black,
                             modifier = Modifier.size(56.dp)
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = if (rules.paidParkingHoleDay == true)
+                            text = if (rules.paidParkingHoleDay)
                                 stringResource(R.string.paid_parking_whole_day)
                             else
                                 stringResource(R.string.paid_parking_not_whole_day),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = if (rules.paidParkingHoleDay == true) Color.White else Color.Black,
+                            color = if (rules.paidParkingHoleDay) Color.White else Color.Black,
                             textAlign = TextAlign.Center
                         )
                     }
                 }
             }
-            // Notify Button
-            if (rules.allowedToPark) {
+        }
+
+        // Notify Button
+        if (rules.allowedToPark) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Button(
                     onClick = onNotifyTimeUp,
                     modifier = Modifier
                         .size(80.dp),
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = ParkingBlue,
+                        containerColor = ParkingBlue.copy(alpha = 0.5f),
                         contentColor = Color.White
                     ),
                     elevation = ButtonDefaults.buttonElevation(
@@ -213,7 +223,7 @@ fun ParkingRulesScreen(
 @Composable
 fun ParkingRulesScreenPreview() {
     MaterialTheme {
-        ParkingRulesScreen(
+        ParkingRulePage(
             rules = Rules(
                 allowedToPark = true,
                 paidParkingHoleDay = true
@@ -226,7 +236,7 @@ fun ParkingRulesScreenPreview() {
 @Composable
 fun ParkingRulesScreenNotAllowedPreview() {
     MaterialTheme {
-        ParkingRulesScreen(
+        ParkingRulePage(
             rules = Rules(
                 allowedToPark = false,
                 paidParkingHoleDay = null
@@ -239,7 +249,7 @@ fun ParkingRulesScreenNotAllowedPreview() {
 @Composable
 fun ParkingRulesScreenFreePreview() {
     MaterialTheme {
-        ParkingRulesScreen(
+        ParkingRulePage(
             rules = Rules(
                 allowedToPark = true,
                 paidParkingHoleDay = false

@@ -67,5 +67,7 @@ dependencies {
     implementation(libs.camerax.view)
     implementation(libs.gson)
     implementation(libs.opencv)
+    implementation(libs.navigation.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
 }
 

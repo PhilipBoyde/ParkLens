@@ -1,4 +1,4 @@
-package se.umu.cs.phbo0006.parkLens.view.camera
+package se.umu.cs.phbo0006.parkLens.view.pages
 
 import se.umu.cs.phbo0006.parkLens.R
 import android.view.Surface
@@ -28,22 +28,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import se.umu.cs.phbo0006.parkLens.model.appData.Languages
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.BackgroundColor
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.ParkingBlue
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParkingBorder
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.TextColor
 
 @Composable
-fun FullScreenCameraView(
+fun FullScreenCameraPage(
     imageCapture: ImageCapture? = null,
     debugMode: Boolean,
     onDebugModeChange: (Boolean) -> Unit,
     onCaptureClick: () -> Unit,
-    selectedLanguage: String,
-    onLanguageSelected: (String) -> Unit
+    selectedLanguage: Languages,
+    onLanguageSelected: (Languages) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -53,7 +58,7 @@ fun FullScreenCameraView(
     val scope = rememberCoroutineScope()
 
     var expanded by remember { mutableStateOf(false) }
-    val languages = listOf("English", "Swedish")
+    val languageList = listOf(Languages.ENGLISH, Languages.SVENSKA)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -64,7 +69,7 @@ fun FullScreenCameraView(
                     .fillMaxHeight()
                     .fillMaxWidth(0.65f)
                     .background(BackgroundColor)
-                    .padding(16.dp)
+                    .padding(12.dp)
                     .safeDrawingPadding()
             ) {
                 Column(
@@ -83,7 +88,7 @@ fun FullScreenCameraView(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(2.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -102,19 +107,41 @@ fun FullScreenCameraView(
                             modifier = Modifier.weight(1f)
                         )
                         Box {
-                            Button(onClick = { expanded = true }) {
-                                Text(text = "English")
+                            Button(
+                                onClick = { expanded = true },
+                                shape = RoundedCornerShape(6.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF323232),
+                                    contentColor = Color.White
+                                ),
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                            ) {
+                                Text(text = selectedLanguage.toString())
                             }
+
                             DropdownMenu(
                                 expanded = expanded,
-                                onDismissRequest = { expanded = false }
+                                onDismissRequest = { expanded = false },
+                                modifier = Modifier
+                                    .background(Color(0xFF323232))
                             ) {
-                                languages.forEach { language ->
-                                    DropdownMenuItem(onClick = {
-                                        onLanguageSelected(language)
-                                        expanded = false
-                                    },
-                                        text = { Text(language) }
+                                languageList.forEach { lang ->
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            onLanguageSelected(lang)
+                                            expanded = false
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(56.dp),
+                                        text = {
+                                            Text(
+                                                lang.toString(),
+                                                fontSize = 18.sp,
+                                                color = TextColor
+                                            )
+                                        }
                                     )
                                 }
                             }
@@ -127,7 +154,7 @@ fun FullScreenCameraView(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(2.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -147,7 +174,13 @@ fun FullScreenCameraView(
                         )
                         Switch(
                             checked = debugMode,
-                            onCheckedChange = { onDebugModeChange(it) }
+                            onCheckedChange = { onDebugModeChange(it) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = TextColor,
+                                checkedTrackColor = RestrictedParkingBorder,
+                                uncheckedThumbColor = TextColor,
+                                uncheckedTrackColor = Color(0xFF323232)
+                            )
                         )
                     }
                 }
@@ -207,7 +240,6 @@ fun FullScreenCameraView(
                 IconButton(
                     onClick = { scope.launch { drawerState.open() } },
                     modifier = Modifier
-                        //.align(Alignment.TopStart)
                         .statusBarsPadding()
                         .align(Alignment.TopStart)
                         .padding(16.dp)
@@ -217,10 +249,6 @@ fun FullScreenCameraView(
                             shape = CircleShape
                         )
                         .clip(CircleShape)
-                        //.padding(16.dp)
-                        //.statusBarsPadding()
-                       // .size(48.dp)
-                        //.clip(CircleShape)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.settings_icon),

@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 val TextColor =  Color(0xFFE5EAF0)
 
 val ParkingBlue = Color(0xFF0067A4)
+val ButtonBlue = ParkingBlue.copy(alpha = 0.5f)
 val RestrictedParking = Color(0xFFFFD908)
 val RestrictedParkingBorder = Color(0xFFF14B53)
 
