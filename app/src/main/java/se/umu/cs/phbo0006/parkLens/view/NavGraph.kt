@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import se.umu.cs.phbo0006.parkLens.controller.util.LanguageManager
 import se.umu.cs.phbo0006.parkLens.model.appData.AppViewModel
 import se.umu.cs.phbo0006.parkLens.model.appData.Languages
+import se.umu.cs.phbo0006.parkLens.view.helper.DebugModePage
 import se.umu.cs.phbo0006.parkLens.view.helper.camera.simpleCapture
 import se.umu.cs.phbo0006.parkLens.view.pages.FullScreenCameraPage
 import se.umu.cs.phbo0006.parkLens.view.pages.ParkingRulePage
@@ -33,8 +34,6 @@ class NavGraph {
         const val ROUTE_COLOR_BLOCKS = "color_blocks"
         const val ROUTE_DEBUG_PREVIEW = "debug_preview"
         const val ROUTE_PARKING_RULES = "parking_rules"
-        const val ROUTE_LOADING = "loading"
-        const val ROUTE_PERMISSION_DENIED = "permission_denied"
     }
 
     @Composable
@@ -113,7 +112,7 @@ class NavGraph {
                             )
 
                             if (isProcessing) {
-                                LoadingScreen()
+                                LoadingScreen(true)
                             }
                         }
                     }
@@ -125,8 +124,11 @@ class NavGraph {
                         SignPreviewPage(
                             blocks = blocksInfos,
                             onTakeNewPhoto = {
+                                if (!sharedViewModel.debugMode.value){
+                                    sharedViewModel.clearCapturedData()
+                                }
                                 navController.popBackStack()
-                                sharedViewModel.clearCapturedData()
+
                             },
                             onContinue = {
                                 navController.navigate(Routes.ROUTE_PARKING_RULES)
@@ -136,7 +138,18 @@ class NavGraph {
                     }
 
                     composable(Routes.ROUTE_DEBUG_PREVIEW) {
-                        TODO()
+                        val blocksInfos by sharedViewModel.blockInfos
+
+                        DebugModePage(
+                            blocksInfos,
+                            onBackClick = {
+                                navController.popBackStack()
+                                sharedViewModel.clearCapturedData()
+                            },
+                            onNextClick = {
+                                navController.navigate(Routes.ROUTE_COLOR_BLOCKS)
+                            }
+                        )
                     }
 
                     composable(Routes.ROUTE_PARKING_RULES) {
@@ -146,10 +159,6 @@ class NavGraph {
                             rules = checkIfAllowedToPark(blocksInfos),
                             onBack = { navController.popBackStack() },
                         )
-                    }
-
-                    composable(Routes.ROUTE_LOADING) {
-                        LoadingScreen()
                     }
                 }
 

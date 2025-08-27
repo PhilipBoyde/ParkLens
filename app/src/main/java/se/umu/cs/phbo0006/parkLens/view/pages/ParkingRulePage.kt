@@ -79,7 +79,7 @@ fun ParkingRulePage(
                     .padding(bottom = 32.dp),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (rules.allowedToPark)
+                    containerColor = if (rules.allowedToPark || rules.freeParking != null)
                         ParkingBlue
                     else
                         RestrictedParkingBorder
@@ -96,7 +96,7 @@ fun ParkingRulePage(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        painter = if (rules.allowedToPark)
+                        painter = if (rules.allowedToPark || rules.freeParking != null)
                             painterResource(id = R.drawable.local_parking)
                         else
                             painterResource(id = R.drawable.no_local_parking),
@@ -108,8 +108,15 @@ fun ParkingRulePage(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = if (rules.allowedToPark)
-                            stringResource(R.string.parking_allowed)
+                        text = if (rules.allowedToPark || rules.freeParking != null)
+
+                            if (rules.freeParking == true){
+                                stringResource(R.string.free_Parking)
+                            } else if (rules.freeParking == false){
+                                stringResource(R.string.Parking_24h, rules.currentTime)
+                            }else {
+                                stringResource(R.string.parking_allowed)
+                            }
                         else
                             stringResource(R.string.parking_not_allowed),
                         style = MaterialTheme.typography.headlineLarge,
@@ -120,18 +127,17 @@ fun ParkingRulePage(
                 }
             }
 
-            // Paid Parking
-            if (rules.allowedToPark && rules.paidParkingHoleDay != null) {
+
+            // Time Range Status
+            if (rules.allowedToPark && rules.timeRangeRule != null && rules.timeRangeRule.timeRange != null ){
+                val timeRangeRule =  rules.timeRangeRule
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 32.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (rules.paidParkingHoleDay)
-                            RestrictedParkingBorder
-                        else
-                            RestrictedParking
+                        containerColor = RestrictedParking
                     ),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 8.dp
@@ -145,26 +151,74 @@ fun ParkingRulePage(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
-                            painter = if (rules.paidParkingHoleDay) {
-                                painterResource(id = R.drawable.monetization)
-                            } else {
-                                painterResource(id = R.drawable.time_based_parking)
-                            },
+                            painter = painterResource(id = R.drawable.timer),
                             contentDescription = null,
-                            tint = if (rules.paidParkingHoleDay) Color.White else Color.Black,
+                            tint = Color.Black,
                             modifier = Modifier.size(56.dp)
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = if (rules.paidParkingHoleDay)
-                                stringResource(R.string.paid_parking_whole_day)
-                            else
-                                stringResource(R.string.paid_parking_not_whole_day),
+                            text = stringResource(R.string.allowed_parking_time, timeRangeRule.timeRange),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = if (rules.paidParkingHoleDay) Color.White else Color.Black,
+                            color = Color.Black,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+
+
+            // Paid Parking
+            if (rules.allowedToPark && rules.paymentRule != null && rules.paymentRule.paidParkingWholeDay != null) {
+                val paymentRule =  rules.paymentRule
+                val paidParkingWholeDay = paymentRule.paidParkingWholeDay
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = RestrictedParkingBorder
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 8.dp
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = if (paidParkingWholeDay) {
+                                painterResource(id = R.drawable.monetization)
+                            } else {
+                                painterResource(id = R.drawable.time_based_parking)
+                            },
+                            contentDescription = null,
+                            tint = TextColor,
+                            modifier = Modifier.size(56.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = if (paidParkingWholeDay)
+                                stringResource(R.string.paid_parking_whole_day)
+                            else
+                                if (paymentRule.endParkTime != null){
+                                    stringResource(R.string.paid_parking_not_whole_day, paymentRule.endParkTime)
+                                } else {
+                                    throw IllegalArgumentException ("Payment rule is not allowed to be null")
+                                },
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = TextColor ,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -173,6 +227,7 @@ fun ParkingRulePage(
         }
 
         // Notify Button
+        /*
         if (rules.allowedToPark) {
             Column(
                 modifier = Modifier
@@ -211,49 +266,7 @@ fun ParkingRulePage(
                 )
             }
         }
-    }
-}
 
-
-
-/*
-                    ------------- TEST -------------
- */
-@Preview(showBackground = true, backgroundColor = 0xFF161618)
-@Composable
-fun ParkingRulesScreenPreview() {
-    MaterialTheme {
-        ParkingRulePage(
-            rules = Rules(
-                allowedToPark = true,
-                paidParkingHoleDay = true
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF161618, name = "Not Allowed to Park")
-@Composable
-fun ParkingRulesScreenNotAllowedPreview() {
-    MaterialTheme {
-        ParkingRulePage(
-            rules = Rules(
-                allowedToPark = false,
-                paidParkingHoleDay = null
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF161618, name = "Free Parking")
-@Composable
-fun ParkingRulesScreenFreePreview() {
-    MaterialTheme {
-        ParkingRulePage(
-            rules = Rules(
-                allowedToPark = true,
-                paidParkingHoleDay = false
-            )
-        )
+         */
     }
 }

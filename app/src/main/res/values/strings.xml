@@ -1,14 +1,24 @@
 <resources>
     <string name="app_name" translatable="false">ParkLens</string>
     <string name="loading_screen">Recreating signs</string>
-    <string name="camera_permission_denied">Camera permission is required</string>
+
     <string name="language">Language</string>
     <string name="debug_mode">Debug Mode</string>
     <string name="settings_title">Settings Menu</string>
     <string name="parking_allowed">Parking is allowed</string>
     <string name="parking_not_allowed">Parking is not allowed</string>
-    <string name="paid_parking_whole_day">Paid parking for the whole day</string>
-    <string name="paid_parking_not_whole_day">Paid parking for limited hours</string>
+    <string name="paid_parking_whole_day">Paid parking</string>
+    <string name="paid_parking_not_whole_day">Paid parking until %1$d:00</string>
+    <string name="allowed_parking_time">Allowed to park for %d min</string>
     <string name="reminder">Set reminder</string>
     <string name="continue_to_result">Analyze</string>
+
+    <string name="free_Parking">Parking is allowed until Sunday, 23:59</string>
+    <string name="Parking_24h">Parking is allowed until tomorrow %s</string>
+
+    <string name="settings_navigation">Go to Settings > Apps > ParkLens > Permissions and enable Camera</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="camera_permission_title">Camera Permission Required</string>
+    <string name="camera_permission_text">This app requires camera access to function properly. Please grant camera permission to continue using the app.</string>
 </resources>

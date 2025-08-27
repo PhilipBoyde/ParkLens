@@ -30,7 +30,7 @@ import se.umu.cs.phbo0006.parkLens.R
  * circular progress indicator, and a loading message.
  */
 @Composable
-fun LoadingScreen() {
+fun LoadingScreen(showText: Boolean) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -48,12 +48,14 @@ fun LoadingScreen() {
                 strokeWidth = 6.dp,
                 modifier = Modifier.size(64.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.loading_screen),
-                fontSize = 24.sp,
-                color = Color.White
-            )
+            if (showText){
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.loading_screen),
+                    fontSize = 24.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }

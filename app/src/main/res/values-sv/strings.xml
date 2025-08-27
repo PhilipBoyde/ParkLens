@@ -1,13 +1,18 @@
 <resources>
     <string name="loading_screen">Återskapar skyltar</string>
-    <string name="camera_permission_denied">Kameratillstånd krävs</string>
     <string name="language">Språk</string>
     <string name="debug_mode">Felsökningsläge</string>
     <string name="settings_title">Inställningar</string>
     <string name="parking_allowed">Parkering är tillåten</string>
     <string name="parking_not_allowed">Parkering är inte tillåten</string>
-    <string name="paid_parking_whole_day">Betald parkering för hela dagen</string>
-    <string name="paid_parking_not_whole_day">Betald parkering under begränsade tider</string>
+    <string name="paid_parking_whole_day">Betald parkering</string>
+    <string name="paid_parking_not_whole_day">Betald parkering fram till %1$d:00</string>
+    <string name="allowed_parking_time">Tillåten att parkera i %d min</string>
     <string name="reminder">Ställ in påminnelse</string>
     <string name="continue_to_result">Analysera</string>
+    <string name="settings_navigation">Gå till Inställningar > Appar > ParkLens > Behörigheter och aktivera Kamera.</string>
+    <string name="open_settings">Öppna inställningar</string>
+    <string name="grant_permission">Ge tillstånd</string>
+    <string name="camera_permission_title">Kameratillstånd krävs</string>
+    <string name="camera_permission_text">Denna app kräver åtkomst till kameran för att fungera korrekt. Bevilja kameratillstånd för att fortsätta använda appen.</string>
 </resources>

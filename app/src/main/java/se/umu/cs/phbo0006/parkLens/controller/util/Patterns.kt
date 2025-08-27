@@ -38,7 +38,7 @@ fun extractRuleFromLine(line: String): ParkingRule? {
             SymbolType.TIME_RANGE -> {
                 val hours = match.groupValues.getOrNull(1)?.toIntOrNull()
                 if (hours != null) {
-                    ParkingRule(text = cleanedLine, type = type, startHour = hours, endHour = hours)
+                    ParkingRule(text = cleanedLine, type = type, startHour = hours, endHour = hours, detectTimeUnit(cleanedLine))
                 } else null
             }
 
@@ -47,4 +47,16 @@ fun extractRuleFromLine(line: String): ParkingRule? {
     }
 
     return ParkingRule(text = cleanedLine, type = SymbolType.UNKNOWN)
+}
+
+
+fun detectTimeUnit(input: String): SymbolType {
+    val lowercaseInput = input.lowercase()
+
+    return when {
+        lowercaseInput.contains("tim") -> SymbolType.HOUR
+        lowercaseInput.contains("min") -> SymbolType.MINUTE
+        lowercaseInput.contains("dygn") -> SymbolType.DAY
+        else -> throw IllegalArgumentException("$input, does not exist in time range" )
+    }
 }

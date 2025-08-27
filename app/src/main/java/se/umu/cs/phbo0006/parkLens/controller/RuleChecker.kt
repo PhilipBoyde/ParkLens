@@ -1,6 +1,5 @@
 package se.umu.cs.phbo0006.parkLens.controller
 
-import android.util.Log
 import se.umu.cs.phbo0006.parkLens.model.holiday.Holiday
 import se.umu.cs.phbo0006.parkLens.model.signs.SymbolType
 import se.umu.cs.phbo0006.parkLens.model.signs.ParkingRule
@@ -23,14 +22,18 @@ import java.time.DayOfWeek
  */
 fun t6TimeIndication(
     rule: ParkingRule,
-    now: LocalDateTime = LocalDateTime.of(2025, 5, 2, 12, 20, 10), // TEST
+    now: LocalDateTime
 ): Boolean {
+    val startHour = rule.startHour
+    val endHour =  rule.endHour
+
+    if (startHour == null || endHour == null){
+        throw IllegalArgumentException ("StartHour (${startHour}) or (${endHour}) is null!")
+    }
+
     val hour = now.hour
     val date = now.toLocalDate()
     val dayOfWeek = date.dayOfWeek
-
-    Log.e("hour", hour.toString())
-    Log.e("start and end", "Start: ${rule.startHour}, END: ${rule.endHour}")
 
     val holidays = HolidayRepository.holidays
     val isHoliday = isHoliday(date, holidays)
@@ -38,7 +41,7 @@ fun t6TimeIndication(
     val isSaturday = dayOfWeek == DayOfWeek.SATURDAY
     val isWeekday = dayOfWeek in DayOfWeek.MONDAY..DayOfWeek.FRIDAY
 
-    // Check if tomorrow is a holiday (for pre-holiday logic)
+    // Check if tomorrow is a holiday (pre-holiday)
     val tomorrowIsHoliday = isHoliday(date.plusDays(1), holidays)
 
 
@@ -53,7 +56,8 @@ fun t6TimeIndication(
         return false
     }
 
-    if (hour !in rule.startHour until rule.endHour) {
+
+    if (hour !in startHour until endHour) {
         return false
     }
 
@@ -91,6 +95,19 @@ fun t16Fee(size: Int) : Boolean? {
     }
 }
 
+
+fun e19Parking(size: Int, dayOfWeek: DayOfWeek) : Boolean?{
+    return if (size == 1){
+        if (dayOfWeek in (DayOfWeek.MONDAY ..DayOfWeek.THURSDAY)){
+            false
+        } else{
+            true
+        }
+    }else {
+        null
+    }
+}
+
 /**
  * Checks the t18TimedParking sign. The "Tillåten tid för parkering" sign indicates the maximum amount of time allowed to park.
  *
@@ -108,7 +125,7 @@ fun t18TimedParking(text: String): Int {
 
     return when {
         matches.isEmpty() -> throw IllegalArgumentException("No number found in text")
-        matches.size > 1 -> throw IllegalArgumentException("More than one number found: $matches")
+        matches.size > 2 -> throw IllegalArgumentException("More than two number found: $matches")
         matches.first() == 0 -> throw IllegalArgumentException("Number cannot be 0")
         else -> matches.first()
     }

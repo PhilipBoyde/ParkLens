@@ -12,6 +12,9 @@ enum class SymbolType {
     HOLIDAY,
 
     TIME_RANGE,
+    DAY,
+    HOUR,
+    MINUTE,
 
     UNKNOWN
 }
