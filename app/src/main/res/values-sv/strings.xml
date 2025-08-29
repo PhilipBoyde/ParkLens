@@ -10,9 +10,27 @@
     <string name="allowed_parking_time">Tillåten att parkera i %d min</string>
     <string name="reminder">Ställ in påminnelse</string>
     <string name="continue_to_result">Analysera</string>
+    <string name="ok_button">OK</string>
     <string name="settings_navigation">Gå till Inställningar > Appar > ParkLens > Behörigheter och aktivera Kamera.</string>
     <string name="open_settings">Öppna inställningar</string>
     <string name="grant_permission">Ge tillstånd</string>
     <string name="camera_permission_title">Kameratillstånd krävs</string>
     <string name="camera_permission_text">Denna app kräver åtkomst till kameran för att fungera korrekt. Bevilja kameratillstånd för att fortsätta använda appen.</string>
+    <string name="free_Parking">Parkering är tillåten fram till söndag kl. 23:59.</string>
+    <string name="Parking_24h">Parkering är tillåten fram till imorgon %s</string>
+    <string name="no_sign_found_title">Ingen parkeringsskylt hittades</string>
+    <string name="no_sign_found_description">Vi kunde inte upptäcka några parkeringsskyltar på bilden. Försök ta en ny bild.</string>
+    <string name="block_title">Block #%d</string>
+    <string name="image_title">Bild:</string>
+    <string name="no_image">Ingen bild</string>
+    <string name="sign_type_title">Skylt typ:</string>
+    <string name="extracted_text_title">Extraherad text:</string>
+    <string name="no_text_extracted">Ingen text extraherad</string>
+    <string name="parking_rules_size">Parkeringsregler (%d)</string>
+    <string name="rule_count">Regel #%d</string>
+    <string name="text_title">Text: %s</string>
+    <string name="time_range_extracted_text">Starttid: %d | Sluttid %d</string>
+    <string name="subtype_title">Undertyp: %s</string>
+    <string name="next_button">Nästa</string>
+    <string name="back_button">Tillbaka</string>
 </resources>

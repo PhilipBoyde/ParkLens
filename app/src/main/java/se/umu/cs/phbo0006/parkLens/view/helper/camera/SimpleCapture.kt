@@ -12,11 +12,22 @@ import se.umu.cs.phbo0006.parkLens.controller.TextRecognition
 import se.umu.cs.phbo0006.parkLens.model.signs.BlockInfo
 import java.util.concurrent.Executors
 
+/**
+ * Captures an image from the camera and processes it, including text recognition.
+ *
+ * @param imageCapture The ImageCapture object for taking pictures.
+ * @param onPhotoCaptured A lambda function called after a photo is captured,
+ *                        receiving the captured ImageBitmap and BlockInfo list.
+ * @param onTextRecognized A lambda function called after text recognition is complete,
+ *                         receiving the recognized text.
+ * @param onComplete A lambda function called after all operations are completed.
+ */
 fun simpleCapture(
     imageCapture: ImageCapture,
     onPhotoCaptured: (ImageBitmap, List<BlockInfo>) -> Unit,
     onTextRecognized: (String) -> Unit,
-    onComplete: () -> Unit
+    onComplete: () -> Unit,
+    onError: () -> Unit
 ) {
     val executor = Executors.newSingleThreadExecutor()
 
@@ -35,7 +46,12 @@ fun simpleCapture(
                     }
 
                     val imageBitmap = rotatedBitmap.asImageBitmap()
-                    TextRecognition.recognizeTextFromImage(bitmap) { blockInfos, text ->
+                    TextRecognition.recognizeTextFromImage(bitmap,
+                        onError = {
+                            onError()
+                            executor.shutdown()
+                        }
+                    ) { blockInfos, text ->
                         onPhotoCaptured(imageBitmap, blockInfos)
                         onTextRecognized(text)
                         onComplete()
@@ -60,6 +76,13 @@ fun simpleCapture(
     )
 }
 
+/**
+ * Rotates a Bitmap by the specified degrees.
+ *
+ * @param bitmap The Bitmap to rotate.
+ * @param degrees The angle of rotation in degrees.
+ * @return The rotated Bitmap.
+ */
 private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
     val matrix = Matrix().apply {
         postRotate(degrees)

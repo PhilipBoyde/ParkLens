@@ -41,6 +41,17 @@ import se.umu.cs.phbo0006.parkLens.view.ui.theme.ParkingBlue
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParkingBorder
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.TextColor
 
+/**
+ * Displays a full-screen camera interface with debug controls, settings panel,
+ * and image capture functionality.
+ *
+ * @param imageCapture Optional ImageCapture instance to handle captured images
+ * @param debugMode Current debug mode state (true/false)
+ * @param onDebugModeChange Callback invoked when the user toggles debug mode
+ * @param onCaptureClick Callback triggered by tapping the capture button
+ * @param selectedLanguage Currently selected language for UI text localization
+ * @param onLanguageSelected Callback to change the application's language
+ */
 @Composable
 fun FullScreenCameraPage(
     imageCapture: ImageCapture? = null,

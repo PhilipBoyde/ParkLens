@@ -9,4 +9,7 @@ val ButtonBlue = ParkingBlue.copy(alpha = 0.8f)
 val RestrictedParking = Color(0xFFFFD908)
 val RestrictedParkingBorder = Color(0xFFF14B53)
 
+val CardBackgroundColor = Color(0xFF2A2A2E)
+val SurfaceVariantColor = Color(0xFF3A3A3E)
+
 val BackgroundColor = Color(0xFF161618)

@@ -9,6 +9,15 @@ import se.umu.cs.phbo0006.parkLens.model.signs.SignType
 import se.umu.cs.phbo0006.parkLens.model.signs.SymbolType
 import java.time.LocalDateTime
 
+/**
+ * Checks if parking is allowed based on a list of BlockInfo objects.
+ *
+ * Evaluates various parking rules such as free parking, paid parking, time restrictions,
+ * and calculates the allowed parking time range.
+ *
+ * @param blockInfos List of BlockInfo representing the parking sign blocks to evaluate.
+ * @return Rules object containing the results of the parking evaluation.
+ */
 fun checkIfAllowedToPark(blockInfos: List<BlockInfo>) : Rules {
     var allowedToPark =  false
     var timeBasedParking = false
@@ -18,7 +27,7 @@ fun checkIfAllowedToPark(blockInfos: List<BlockInfo>) : Rules {
     var timeType: SymbolType? = null
     var endParkTime: Int? = null
     var freeParking: Boolean? = null
-    val localtime: LocalDateTime = LocalDateTime.of(2025, 8, 25, 12, 20, 10)
+    val localtime: LocalDateTime = LocalDateTime.now()
 
     blockInfos.forEach { block ->
         val blockSize = block.rules.size
@@ -90,13 +99,24 @@ fun checkIfAllowedToPark(blockInfos: List<BlockInfo>) : Rules {
     )
 }
 
+/**
+ * Calibrates the allowed parking time based on the time range, time unit, end park time, and current time.
+ *
+ * @param timeRange The allowed time range for parking.
+ * @param timeUnit The unit of the time range (minute, hour, day).
+ * @param endParkTime The hour when parking ends.
+ * @param localtime The current local time.
+ * @return The calibrated parking time in minutes.
+ * @throws IllegalArgumentException if the time unit is not allowed.
+ */
 private fun parkingTimeCalibration(timeRange: Int, timeUnit: SymbolType, endParkTime: Int, localtime: LocalDateTime): Int {
     val currentTimeInMinutes = localtime.hour * 60 + localtime.minute
+    val endParkTimeInMinutes = endParkTime * 60
 
-    val remainingTimeInMinutes = if (endParkTime >= currentTimeInMinutes) {
-        endParkTime - currentTimeInMinutes
+    val remainingTimeInMinutes = if (endParkTimeInMinutes >= currentTimeInMinutes) {
+        endParkTimeInMinutes - currentTimeInMinutes
     } else {
-        (24 * 60 - currentTimeInMinutes) + endParkTime
+        (24 * 60 - currentTimeInMinutes) + endParkTimeInMinutes
     }
 
     val timeRangeInMinutes = when (timeUnit) {
@@ -106,5 +126,9 @@ private fun parkingTimeCalibration(timeRange: Int, timeUnit: SymbolType, endPark
         else -> { throw IllegalArgumentException ("$timeUnit, is not allowed!") }
     }
 
-    return minOf(remainingTimeInMinutes, timeRangeInMinutes)
+    return if (timeRangeInMinutes > remainingTimeInMinutes) {
+        remainingTimeInMinutes
+    } else {
+        timeRangeInMinutes
+    }
 }

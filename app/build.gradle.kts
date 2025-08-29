@@ -10,10 +10,10 @@ android {
 
     defaultConfig {
         applicationId = "se.umu.cs.phbo0006.parkLens"
-        minSdk = 28
+        minSdk = 29
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

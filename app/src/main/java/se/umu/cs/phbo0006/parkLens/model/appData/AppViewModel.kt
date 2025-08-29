@@ -6,6 +6,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import se.umu.cs.phbo0006.parkLens.model.signs.BlockInfo
 
+/**
+ * A ViewModel for managing data related to image recognition and parsing.
+ */
 class AppViewModel : ViewModel() {
     private val _capturedBitmap = mutableStateOf<ImageBitmap?>(null)
     val capturedBitmap: State<ImageBitmap?> = _capturedBitmap

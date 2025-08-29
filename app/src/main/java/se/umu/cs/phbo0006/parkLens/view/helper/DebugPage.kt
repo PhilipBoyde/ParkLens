@@ -24,19 +24,25 @@ import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import se.umu.cs.phbo0006.parkLens.model.signs.ParkingRule
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.ParkingBlue
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.ButtonBlue
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParking
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.BackgroundColor
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.CardBackgroundColor
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.SurfaceVariantColor
+import se.umu.cs.phbo0006.parkLens.R
 
-// Custom color palette
-val TextColor = Color(0xFFE5EAF0)
-val ParkingBlue = Color(0xFF0067A4)
-val ButtonBlue = ParkingBlue.copy(alpha = 0.8f)
-val RestrictedParking = Color(0xFFFFD908)
-val RestrictedParkingBorder = Color(0xFFF14B53)
-val BackgroundColor = Color(0xFF161618)
-val CardBackgroundColor = Color(0xFF2A2A2E)
-val SurfaceVariantColor = Color(0xFF3A3A3E)
-
+/**
+ * Displays the debug mode page containing navigation buttons and scrollable list of block information cards.
+ *
+ * @param blockInfoList List of [BlockInfo] objects to display in card format
+ * @param onBackClick Callback invoked when back button is clicked
+ * @param onNextClick Callback invoked when next button is clicked
+ * @param modifier Optional [Modifier] for layout customization
+ */
 @Composable
 fun DebugModePage(
     blockInfoList: List<BlockInfo>,
@@ -50,7 +56,7 @@ fun DebugModePage(
             .background(BackgroundColor)
             .systemBarsPadding()
     ) {
-        // Top navigation bar
+        // navigation bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,7 +73,7 @@ fun DebugModePage(
                     contentColor = TextColor
                 )
             ) {
-                Text("Back")
+                Text(stringResource(R.string.back_button))
             }
 
             // Next button
@@ -79,7 +85,7 @@ fun DebugModePage(
                     contentColor = TextColor
                 )
             ) {
-                Text("Next")
+                Text(stringResource(R.string.next_button))
             }
         }
 
@@ -101,6 +107,13 @@ fun DebugModePage(
     }
 }
 
+/**
+ * Displays a card containing information about a specific parking block.
+ *
+ * @param blockInfo The [BlockInfo] object containing block data
+ * @param blockNumber Current block number (starting from 1)
+ * @param modifier Optional [Modifier] for layout adjustments (default: fills maximum width)
+ */
 @Composable
 fun BlockInfoCard(
     blockInfo: BlockInfo,
@@ -119,7 +132,7 @@ fun BlockInfoCard(
         ) {
             // Header
             Text(
-                text = "Block #$blockNumber",
+                text = stringResource(R.string.block_title, blockNumber),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = ParkingBlue,
@@ -136,7 +149,7 @@ fun BlockInfoCard(
                     modifier = Modifier.weight(0.4f)
                 ) {
                     Text(
-                        text = "Image: ",
+                        text = stringResource(R.string.image_title),
                         style = MaterialTheme.typography.labelMedium,
                         color = TextColor.copy(alpha = 0.7f),
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -163,7 +176,7 @@ fun BlockInfoCard(
                             )
                         } else {
                             Text(
-                                text = "No image",
+                                text = stringResource(R.string.no_image),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = TextColor.copy(alpha = 0.6f)
                             )
@@ -181,7 +194,7 @@ fun BlockInfoCard(
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) {
                         Text(
-                            text = "Sign Type: ",
+                            text = stringResource(R.string.sign_type_title),
                             style = MaterialTheme.typography.labelMedium,
                             color = TextColor.copy(alpha = 0.7f)
                         )
@@ -212,14 +225,14 @@ fun BlockInfoCard(
 
                     // Extracted text
                     Text(
-                        text = "Extracted Text:",
+                        text = stringResource(R.string.extracted_text_title),
                         style = MaterialTheme.typography.labelMedium,
                         color = TextColor.copy(alpha = 0.7f),
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
 
                     Text(
-                        text = blockInfo.text.ifBlank { "No text extracted" },
+                        text = blockInfo.text.ifBlank { stringResource(R.string.no_text_extracted) },
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextColor,
                         modifier = Modifier
@@ -240,7 +253,7 @@ fun BlockInfoCard(
                 )
 
                 Text(
-                    text = "Parking Rules (${blockInfo.rules.size})",
+                    text = stringResource(R.string.parking_rules_size, blockInfo.rules.size),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = ParkingBlue,
@@ -262,6 +275,13 @@ fun BlockInfoCard(
     }
 }
 
+/**
+ * Displays a card containing detailed information about an individual parking rule.
+ *
+ * @param rule The [ParkingRule] object with validation details
+ * @param ruleNumber Current rule number (starting from 1)
+ * @param modifier Optional [Modifier] for layout adjustments (default: fills maximum width)
+ */
 @Composable
 fun ParkingRuleItem(
     rule: ParkingRule,
@@ -284,7 +304,7 @@ fun ParkingRuleItem(
                 modifier = Modifier.padding(bottom = 8.dp)
             ) {
                 Text(
-                    text = "Rule #$ruleNumber",
+                    text = stringResource(R.string.rule_count, ruleNumber),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Medium,
                     color = ParkingBlue
@@ -313,16 +333,17 @@ fun ParkingRuleItem(
                 // Rule text
                 if (rule.text.isNotBlank()) {
                     Text(
-                        text = "Text: ${rule.text}",
+                        text = stringResource(R.string.text_title, rule.text),
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextColor
                     )
                 }
 
                 // Time range
-                if (rule.startHour != -1 || rule.endHour != -1) {
+                if (rule.startHour != null || rule.endHour != null) {
                     Text(
-                        text = "startHour: ${rule.startHour} | endHour: ${rule.endHour}",
+                        text = stringResource(R.string.time_range_extracted_text,
+                            rule.startHour!!, rule.endHour!!),
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextColor
                     )
@@ -331,7 +352,7 @@ fun ParkingRuleItem(
                 // Subtype
                 rule.subType?.let { subType ->
                     Text(
-                        text = "Subtype: ${subType.name}",
+                        text = stringResource(R.string.subtype_title, subType.name),
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextColor
                     )
@@ -341,6 +362,12 @@ fun ParkingRuleItem(
     }
 }
 
+/**
+ * Converts a [SignType] enum value to its corresponding color representation.
+ *
+ * @param signType Enum of [SignType] to map to color
+ * @return Color appropriate for the given sign type (handles UNKNOWN case by defaulting)
+ */
 @Composable
 fun getSignTypeColor(signType: SignType): Color {
     return when (signType) {

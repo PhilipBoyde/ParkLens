@@ -15,6 +15,16 @@ val parkingSignPatterns = listOf(
     Regex("""\b(\d{1,2})\s*(tim|dygn|min)\b""") to SymbolType.TIME_RANGE,
 )
 
+
+/**
+ * Extracts a ParkingRule from a given line of text based on regular expression matching.
+ *
+ * This function attempts to identify the parking rule type (e.g. PAID, PARKING, WEEKDAY)
+ * from the input line using the predefined regular expressions.
+ *
+ * @param line The input string representing the parking sign.
+ * @return A ParkingRule object if a match is found.
+ */
 fun extractRuleFromLine(line: String): ParkingRule? {
     val cleanedLine = TextCleanUp.cleanStringLine(line)
 
@@ -49,7 +59,15 @@ fun extractRuleFromLine(line: String): ParkingRule? {
     return ParkingRule(text = cleanedLine, type = SymbolType.UNKNOWN)
 }
 
-
+/**
+ * Detects the time unit (hour, minute, day) from a time-based string.
+ *
+ * This function analyzes the input string to determine the time unit represented.
+ *
+ * @param input The input string representing a time range.
+ * @return The SymbolType representing the time unit (HOUR, MINUTE, or DAY).
+ * @throws IllegalArgumentException if the input string does not represent a valid time unit.
+ */
 fun detectTimeUnit(input: String): SymbolType {
     val lowercaseInput = input.lowercase()
 

@@ -43,6 +43,13 @@ import se.umu.cs.phbo0006.parkLens.view.ui.theme.TextColor
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.ButtonBlue
 
 
+/**
+ * Composable that displays a preview of detected parking signs.
+ *
+ * @param blocks List of BlockInfo representing detected sign blocks.
+ * @param onTakeNewPhoto Callback invoked when the user wants to retake a photo.
+ * @param onContinue Callback invoked when the user wants to continue to the next step.
+ */
 @Composable
 fun SignPreviewPage(
     blocks: List<BlockInfo>,

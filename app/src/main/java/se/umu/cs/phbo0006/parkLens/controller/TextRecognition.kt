@@ -24,8 +24,15 @@ class TextRecognition {
 
     companion object {
 
+        /**
+         * Recognizes text from an image and processes the result.
+         *
+         * @param image The input Bitmap from which to recognize text.
+         * @param onResult A callback function that is called with the extracted BlockInfo and the recognized text.
+         */
         fun recognizeTextFromImage(
             image: Bitmap,
+            onError: () -> Unit,
             onResult: (List<BlockInfo>, String) -> Unit
         ) {
             try {
@@ -34,8 +41,12 @@ class TextRecognition {
 
                 recognizer.process(inputImage)
                     .addOnSuccessListener { visionText ->
-                        val (blockInfos, resultText) = processTextRecognitionResult(visionText, image)
-                        onResult(blockInfos, resultText)
+                        if (visionText.text.isEmpty()) {
+                            onError()
+                        } else {
+                            val (blockInfos, resultText) = processTextRecognitionResult(visionText, image)
+                            onResult(blockInfos, resultText)
+                        }
                     }
                     .addOnFailureListener { e ->
                         Log.e("MLKit", "Text recognition error", e)
@@ -47,6 +58,13 @@ class TextRecognition {
             }
         }
 
+        /**
+         * Processes the result of text recognition, extracting BlockInfo and parking rules.
+         *
+         * @param visionText The recognized Text object from MLKit.
+         * @param bitmap The input Bitmap used for recognition.
+         * @return A Pair containing the List of BlockInfo and the processed text string.
+         */
         private fun processTextRecognitionResult(visionText: Text, bitmap: Bitmap): Pair<List<BlockInfo>, String> {
             val resultText = StringBuilder()
             val rules = mutableListOf<List<ParkingRule>>()
@@ -112,6 +130,14 @@ class TextRecognition {
             return blockInfos to resultText.toString()
         }
 
+        /**
+         * Crops a Bitmap to a rectangular region defined by the provided bounds.
+         *
+         * @param bitmap The Bitmap to crop.
+         * @param bounds The rectangular bounds for the crop.
+         * @param expand Whether to expand the crop region beyond the bounding box.
+         * @return The cropped Bitmap.
+         */
         fun cropBitmapToBounds(bitmap: Bitmap, bounds: Rect?, expand: Boolean): ImageBitmap? {
             if (bounds == null) {
                 Log.w("CropDebug", "Null bounds, cannot crop")
@@ -160,6 +186,15 @@ class TextRecognition {
         }
 
 
+        /**
+         * Crops a Bitmap to a rectangular region defined by the provided bounds.
+         *
+         * @param bitmap The Bitmap to crop.
+         * @param bounds The rectangular bounds for the crop.
+         * @param expand Whether to expand the crop region beyond the bounding box.
+         * @return The cropped Bitmap.
+         *
+         */
         private fun ImageBitmap.asBitmap(): Bitmap {
             val bitmap = createBitmap(width, height)
             val canvas = android.graphics.Canvas(bitmap)

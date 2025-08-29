@@ -95,18 +95,23 @@ fun t16Fee(size: Int) : Boolean? {
     }
 }
 
-
+/**
+ * Checks the e19Parking sign. The "P" sign indicates if you can park for 24h (false),
+ * unlimited time (true) or if other rules are present.
+ *
+ * @param size The size of blockinfo (total amount of parking signs).
+ * @param dayOfWeek The current day of the week.
+ * @return True for unlimited time, false for 24h parking, or null if other rules are present.
+ * @see <a href="https://www.transportstyrelsen.se/sv/vagtrafik/trafikregler-och-vagmarken/vagmarken/anvisningsmarken/parkering/">Official "P" sign on Transportstyrelsen</a>
+ */
 fun e19Parking(size: Int, dayOfWeek: DayOfWeek) : Boolean?{
     return if (size == 1){
-        if (dayOfWeek in (DayOfWeek.MONDAY ..DayOfWeek.THURSDAY)){
-            false
-        } else{
-            true
-        }
+        dayOfWeek !in (DayOfWeek.MONDAY ..DayOfWeek.THURSDAY)
     }else {
         null
     }
 }
+
 
 /**
  * Checks the t18TimedParking sign. The "Tillåten tid för parkering" sign indicates the maximum amount of time allowed to park.

@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">ParkLens</string>
     <string name="loading_screen">Recreating signs</string>
-
     <string name="language">Language</string>
     <string name="debug_mode">Debug Mode</string>
     <string name="settings_title">Settings Menu</string>
@@ -12,13 +11,27 @@
     <string name="allowed_parking_time">Allowed to park for %d min</string>
     <string name="reminder">Set reminder</string>
     <string name="continue_to_result">Analyze</string>
-
     <string name="free_Parking">Parking is allowed until Sunday, 23:59</string>
     <string name="Parking_24h">Parking is allowed until tomorrow %s</string>
-
+    <string name="no_sign_found_title">No Sign Found</string>
+    <string name="no_sign_found_description">We could not detect any parking signs in the image. Please try taking another photo.</string>
+    <string name="ok_button">OK</string>
     <string name="settings_navigation">Go to Settings > Apps > ParkLens > Permissions and enable Camera</string>
     <string name="open_settings">Open Settings</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="camera_permission_title">Camera Permission Required</string>
     <string name="camera_permission_text">This app requires camera access to function properly. Please grant camera permission to continue using the app.</string>
+    <string name="block_title">Block #%d</string>
+    <string name="image_title">Image: </string>
+    <string name="no_image">No Image</string>
+    <string name="sign_type_title">Sign Type: </string>
+    <string name="extracted_text_title">Extracted Text: </string>
+    <string name="no_text_extracted">No Text Extracted</string>
+    <string name="parking_rules_size">Parking Rules (%d)</string>
+    <string name="rule_count">Rule #%d</string>
+    <string name="text_title">Text: %s</string>
+    <string name="time_range_extracted_text">startHour: %d | endHour %d</string>
+    <string name="subtype_title">Subtype: %s</string>
+    <string name="next_button">Next</string>
+    <string name="back_button">Back</string>
 </resources>

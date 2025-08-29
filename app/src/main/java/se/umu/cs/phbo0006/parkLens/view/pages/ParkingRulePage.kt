@@ -28,6 +28,14 @@ import se.umu.cs.phbo0006.parkLens.view.ui.theme.ParkingBlue
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParking
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParkingBorder
 
+
+/**
+ * Displays the parking rule page with information about current parking rules, status, and options.
+ *
+ * @param rules The [Rules] object containing parking rule data to display.
+ * @param onBack Callback invoked when the back button is pressed.
+ * @param onNotifyTimeUp Callback invoked when the notification button is pressed (currently unused).
+ */
 @Composable
 fun ParkingRulePage(
     rules: Rules,

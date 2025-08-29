@@ -21,6 +21,10 @@ import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
 import se.umu.cs.phbo0006.parkLens.view.helper.camera.CameraPermission
 
+/**
+ * Main entry point for the ParkLens application.
+ * Handles camera permission, OpenCV initialization, and sets up the main UI content.
+ */
 class MainActivity : ComponentActivity() {
 
     private var hasCameraPermission by mutableStateOf(false)
@@ -37,6 +41,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Called when the activity is starting. Initializes permissions, OpenCV, and sets the content view.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied.
+     */
    @SuppressLint("SourceLockedOrientationActivity")
    override fun onCreate(savedInstanceState: Bundle?) {
        super.onCreate(savedInstanceState)
@@ -62,6 +71,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Initializes the OpenCV library.
+     * Logs the result of the initialization.
+     */
     private fun initializeOpenCV() {
         if (!OpenCVLoader.initLocal()) {
             Log.e("OpenCV", "Failed to load OpenCV library")
@@ -70,6 +83,9 @@ class MainActivity : ComponentActivity() {
        }
     }
     
+    /**
+     * Checks if the camera permission is granted. If not, requests the permission.
+     */
     private fun checkForPermission(){
         hasCameraPermission = ContextCompat.checkSelfPermission(
             this, Manifest.permission.CAMERA
@@ -80,6 +96,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Opens the application settings screen for the user to manually grant permissions.
+     */
     private fun openAppSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
             data = Uri.fromParts("package", packageName, null)
@@ -87,9 +106,12 @@ class MainActivity : ComponentActivity() {
         startActivity(intent)
     }
 
+    /**
+     * Called when the activity will start interacting with the user.
+     * Re-checks camera permission.
+     */
     override fun onResume() {
         super.onResume()
         checkForPermission()
     }
 }
-
