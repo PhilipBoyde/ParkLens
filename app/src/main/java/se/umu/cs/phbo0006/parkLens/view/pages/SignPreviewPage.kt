@@ -41,7 +41,7 @@ import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParking
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.RestrictedParkingBorder
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.TextColor
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.ButtonBlue
-
+import se.umu.cs.phbo0006.parkLens.model.signs.ParkingRule
 
 /**
  * Composable that displays a preview of detected parking signs.
@@ -62,29 +62,12 @@ fun SignPreviewPage(
             .background(BackgroundColor)
             .systemBarsPadding()
     ) {
-        // Back button
-        IconButton(
-            onClick = onTakeNewPhoto,
+        BackButton(
+            onTakeNewPhoto,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(16.dp)
-                .size(48.dp)
-                .background(
-                    color = ButtonBlue,
-                    shape = CircleShape
-                )
-                .zIndex(10f)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.back_arrow),
-                contentDescription = null,
-                tint = TextColor,
-                modifier = Modifier.size(32.dp)
-            )
-        }
+        )
 
-
-        // Main content
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -93,100 +76,172 @@ fun SignPreviewPage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Signs
-            LazyColumn(
+            SignList(
+                blocks,
                 modifier = Modifier
                     .weight(1f)
                     .align(Alignment.CenterHorizontally),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(blocks.size) { index ->
-                    val block = blocks[index]
-
-                    val (backgroundColor, borderColor, textColor) = when (block.color) {
-                        SignType.BLUE -> Triple(ParkingBlue, Color.White, Color.White)
-                        SignType.YELLOW -> Triple(RestrictedParking, RestrictedParkingBorder, Color.Black)
-                        SignType.UNKNOWN -> Triple(Color.White, Color.Black, Color.Black)
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(backgroundColor)
-                            .border(7.dp, borderColor, RoundedCornerShape(12.dp))
-                            .padding(12.dp)
-                            .align(Alignment.CenterHorizontally)
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(1.dp),
-                            modifier = Modifier.wrapContentWidth()
-                        ) {
-                            block.rules.forEach { line ->
-                                val fontSize = if (line.type == SymbolType.PARKING){
-                                    124.sp
-                                } else {
-                                    43.sp
-                                }
-
-                                val currentTextColor = if (line.type == SymbolType.HOLIDAY) {
-                                    RestrictedParkingBorder
-                                } else {
-                                    textColor
-                                }
-
-                                Text(
-                                    text = line.text,
-                                    color = currentTextColor,
-                                    fontSize = fontSize,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier
-                                        .wrapContentWidth()
-                                        .padding(8.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Continue button
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            IconButton(
-                onClick = onContinue,
-                modifier = Modifier
-                    .size(80.dp)
-                    .background(
-                        color = ButtonBlue,
-                        shape = CircleShape
-                    )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.scan),
-                    contentDescription = null,
-                    tint = TextColor,
-                    modifier = Modifier.size(36.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.continue_to_result),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = TextColor,
-                textAlign = TextAlign.Center
             )
         }
 
+        ContinueButton(
+            onContinue,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+        )
+    }
+}
+
+/**
+ * Composable for the back button, allowing the user to retake a photo.
+ *
+ * @param onTakeNewPhoto Callback invoked when the button is clicked.
+ * @param modifier Modifier for styling and positioning.
+ */
+@Composable
+private fun BackButton(onTakeNewPhoto: () -> Unit, modifier: Modifier = Modifier) {
+    IconButton(
+        onClick = onTakeNewPhoto,
+        modifier = modifier
+            .padding(16.dp)
+            .size(48.dp)
+            .background(
+                color = ButtonBlue,
+                shape = CircleShape
+            )
+            .zIndex(10f)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.back_arrow),
+            contentDescription = null,
+            tint = TextColor,
+            modifier = Modifier.size(32.dp)
+        )
+    }
+}
+
+/**
+ * Composable that displays a list of sign blocks.
+ *
+ * @param blocks List of BlockInfo to display.
+ * @param modifier Modifier for styling and positioning.
+ */
+@Composable
+private fun SignList(blocks: List<BlockInfo>, modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        items(blocks.size) { index ->
+            SignBlock(blocks[index])
+        }
+    }
+}
+
+/**
+ * Composable that displays a single sign block with its rules.
+ *
+ * @param block BlockInfo representing the sign block.
+ * @param modifier Modifier for styling and positioning.
+ */
+@Composable
+private fun SignBlock(block: BlockInfo, modifier: Modifier = Modifier) {
+    val (backgroundColor, borderColor, textColor) = when (block.color) {
+        SignType.BLUE -> Triple(ParkingBlue, Color.White, Color.White)
+        SignType.YELLOW -> Triple(RestrictedParking, RestrictedParkingBorder, Color.Black)
+        SignType.UNKNOWN -> Triple(Color.White, Color.Black, Color.Black)
+    }
+
+    Box(
+        modifier = modifier
+            .wrapContentWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(backgroundColor)
+            .border(7.dp, borderColor, RoundedCornerShape(12.dp))
+            .padding(12.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(1.dp),
+            modifier = Modifier.wrapContentWidth()
+        ) {
+            block.rules.forEach { line ->
+                SignRuleText(line, textColor)
+            }
+        }
+    }
+}
+
+/**
+ * Composable that displays a single rule line within a sign block.
+ *
+ * @param line ParkingRule representing the rule.
+ * @param defaultTextColor Default color for the rule text.
+ */
+@Composable
+private fun SignRuleText(line: ParkingRule, defaultTextColor: Color) {
+    val fontSize = if (line.type == SymbolType.PARKING) {
+        124.sp
+    } else {
+        43.sp
+    }
+
+    val currentTextColor = if (line.type == SymbolType.HOLIDAY) {
+        RestrictedParkingBorder
+    } else {
+        defaultTextColor
+    }
+
+    Text(
+        text = line.text,
+        color = currentTextColor,
+        fontSize = fontSize,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .wrapContentWidth()
+            .padding(8.dp)
+    )
+}
+
+/**
+ * Composable for the continue button, allowing the user to proceed to the next step.
+ *
+ * @param onContinue Callback invoked when the button is clicked.
+ * @param modifier Modifier for styling and positioning.
+ */
+@Composable
+private fun ContinueButton(onContinue: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .padding(bottom = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        IconButton(
+            onClick = onContinue,
+            modifier = Modifier
+                .size(80.dp)
+                .background(
+                    color = ButtonBlue,
+                    shape = CircleShape
+                )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.scan),
+                contentDescription = null,
+                tint = TextColor,
+                modifier = Modifier.size(36.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = stringResource(R.string.continue_to_result),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
+            color = TextColor,
+            textAlign = TextAlign.Center
+        )
     }
 }

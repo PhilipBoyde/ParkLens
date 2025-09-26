@@ -22,18 +22,16 @@ import se.umu.cs.phbo0006.parkLens.view.NavGraph
 import se.umu.cs.phbo0006.parkLens.view.helper.LoadingScreen
 
 /**
- * A Compose UI component for handling camera permission requests.
- * This component displays different screens based on whether the user has granted
- * camera permission, or if there are issues with the permission.
+ * Displays the camera permission UI flow.
  *
- * @param hasCameraPermission True if the user has granted camera permission.
- * @param showPermissionDeniedScreen True if a permission denied screen is being displayed.
- * @param shouldShowRationale True if the user has been prompted to grant permission
- *                           and chose not to, indicating a "Don't ask again" option.
- * @param onRequestPermission A lambda function to be called when the user requests
- *                            to grant camera permission.
- * @param onOpenSettings A lambda function to be called when the user needs to
- *                       manually open the device's settings app.
+ * Shows either the main navigation, a permission denied screen, or a loading screen
+ * depending on the permission state.
+ *
+ * @param hasCameraPermission True if camera permission is granted.
+ * @param showPermissionDeniedScreen True if permission denied UI should be shown.
+ * @param shouldShowRationale True if rationale for permission should be shown.
+ * @param onRequestPermission Callback for requesting permission.
+ * @param onOpenSettings Callback for opening device settings.
  */
 @Composable
 fun CameraPermission(
@@ -49,36 +47,62 @@ fun CameraPermission(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            when {
-                hasCameraPermission -> {
-                    navGraph.AppNavHost()
-                }
-                showPermissionDeniedScreen -> {
-                    PermissionDeniedScreen(
-                        shouldShowRationale = shouldShowRationale,
-                        onRequestPermission = onRequestPermission,
-                        onOpenSettings = onOpenSettings
-                    )
-                }
-                else -> {
-                    LoadingScreen(false)
-                }
-            }
+            CameraPermissionContent(
+                hasCameraPermission = hasCameraPermission,
+                showPermissionDeniedScreen = showPermissionDeniedScreen,
+                shouldShowRationale = shouldShowRationale,
+                onRequestPermission = onRequestPermission,
+                onOpenSettings = onOpenSettings,
+                navGraph = navGraph
+            )
         }
     }
 }
 
 /**
- * A Compose UI screen to display when the user has denied camera permission.
- * This screen provides options for the user to grant permission or manually
- * open the device's settings app.
+ * Handles which UI to show based on permission state.
  *
- * @param shouldShowRationale True if the user has been prompted to grant permission
- *                           and chose not to.
- * @param onRequestPermission A lambda function to be called when the user requests
- *                            to grant camera permission.
- * @param onOpenSettings A lambda function to be called when the user needs to
- *                       manually open the device's settings app.
+ * @param hasCameraPermission True if camera permission is granted.
+ * @param showPermissionDeniedScreen True if permission denied UI should be shown.
+ * @param shouldShowRationale True if rationale for permission should be shown.
+ * @param onRequestPermission Callback for requesting permission.
+ * @param onOpenSettings Callback for opening device settings.
+ * @param navGraph Navigation graph instance.
+ */
+@Composable
+private fun CameraPermissionContent(
+    hasCameraPermission: Boolean,
+    showPermissionDeniedScreen: Boolean,
+    shouldShowRationale: Boolean,
+    onRequestPermission: () -> Unit,
+    onOpenSettings: () -> Unit,
+    navGraph: NavGraph
+) {
+    when {
+        hasCameraPermission -> {
+            navGraph.AppNavHost()
+        }
+        showPermissionDeniedScreen -> {
+            PermissionDeniedScreen(
+                shouldShowRationale = shouldShowRationale,
+                onRequestPermission = onRequestPermission,
+                onOpenSettings = onOpenSettings
+            )
+        }
+        else -> {
+            LoadingScreen(false)
+        }
+    }
+}
+
+/**
+ * Screen shown when camera permission is denied.
+ *
+ * Offers options to request permission or open settings.
+ *
+ * @param shouldShowRationale True if rationale for permission should be shown.
+ * @param onRequestPermission Callback for requesting permission.
+ * @param onOpenSettings Callback for opening device settings.
  */
 @Composable
 fun PermissionDeniedScreen(
@@ -93,49 +117,107 @@ fun PermissionDeniedScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = stringResource(R.string.camera_permission_title),
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
+        PermissionDeniedTitle()
         Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.camera_permission_text),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
+        PermissionDeniedText()
         Spacer(modifier = Modifier.height(32.dp))
-
-        if (shouldShowRationale) {
-            // User denied
-            Button(
-                onClick = onRequestPermission,
-                modifier = Modifier.fillMaxWidth(0.8f)
-            ) {
-                Text(stringResource(R.string.grant_permission))
-            }
-        } else {
-            // "Don't ask again" - need to go to settings
-            Button(
-                onClick = onOpenSettings,
-                modifier = Modifier.fillMaxWidth(0.8f)
-            ) {
-                Text(stringResource(R.string.open_settings))
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = stringResource(R.string.settings_navigation),
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        PermissionDeniedActions(
+            shouldShowRationale = shouldShowRationale,
+            onRequestPermission = onRequestPermission,
+            onOpenSettings = onOpenSettings
+        )
     }
+}
+
+/**
+ * Displays the title for the permission denied screen.
+ */
+@Composable
+private fun PermissionDeniedTitle() {
+    Text(
+        text = stringResource(R.string.camera_permission_title),
+        style = MaterialTheme.typography.headlineMedium,
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.onSurface
+    )
+}
+
+/**
+ * Displays the explanatory text for the permission denied screen.
+ */
+@Composable
+private fun PermissionDeniedText() {
+    Text(
+        text = stringResource(R.string.camera_permission_text),
+        style = MaterialTheme.typography.bodyLarge,
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+/**
+ * Displays actions for the permission denied screen.
+ *
+ * Shows either a permission request button or a button to open settings.
+ *
+ * @param shouldShowRationale True if rationale for permission should be shown.
+ * @param onRequestPermission Callback for requesting permission.
+ * @param onOpenSettings Callback for opening device settings.
+ */
+@Composable
+private fun PermissionDeniedActions(
+    shouldShowRationale: Boolean,
+    onRequestPermission: () -> Unit,
+    onOpenSettings: () -> Unit
+) {
+    if (shouldShowRationale) {
+        PermissionRequestButton(onRequestPermission)
+    } else {
+        OpenSettingsButton(onOpenSettings)
+        Spacer(modifier = Modifier.height(16.dp))
+        SettingsNavigationText()
+    }
+}
+
+/**
+ * Button to request camera permission.
+ *
+ * @param onRequestPermission Callback for requesting permission.
+ */
+@Composable
+private fun PermissionRequestButton(onRequestPermission: () -> Unit) {
+    Button(
+        onClick = onRequestPermission,
+        modifier = Modifier.fillMaxWidth(0.8f)
+    ) {
+        Text(stringResource(R.string.grant_permission))
+    }
+}
+
+/**
+ * Button to open device settings.
+ *
+ * @param onOpenSettings Callback for opening device settings.
+ */
+@Composable
+private fun OpenSettingsButton(onOpenSettings: () -> Unit) {
+    Button(
+        onClick = onOpenSettings,
+        modifier = Modifier.fillMaxWidth(0.8f)
+    ) {
+        Text(stringResource(R.string.open_settings))
+    }
+}
+
+/**
+ * Text explaining how to navigate to settings.
+ */
+@Composable
+private fun SettingsNavigationText() {
+    Text(
+        text = stringResource(R.string.settings_navigation),
+        style = MaterialTheme.typography.bodySmall,
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }

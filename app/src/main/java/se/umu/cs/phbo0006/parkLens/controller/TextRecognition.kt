@@ -104,9 +104,7 @@ class TextRecognition {
                         }
 
                         lineRules.add(rule)
-
                         Log.i("PARSER!", "Parsed Rule: $rule")
-
                     }
 
                     rules.add(lineRules)

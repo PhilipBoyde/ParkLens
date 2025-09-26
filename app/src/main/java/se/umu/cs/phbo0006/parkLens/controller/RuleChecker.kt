@@ -56,7 +56,6 @@ fun t6TimeIndication(
         return false
     }
 
-
     if (hour !in startHour until endHour) {
         return false
     }

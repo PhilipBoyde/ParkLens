@@ -20,7 +20,10 @@ import androidx.compose.ui.unit.sp
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.TextColor
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.CardBackgroundColor
 import se.umu.cs.phbo0006.parkLens.view.ui.theme.ParkingBlue
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.ErrorIconBackground
+import se.umu.cs.phbo0006.parkLens.view.ui.theme.ErrorIconColor
 import se.umu.cs.phbo0006.parkLens.R
+
 
 /**
  * Displays a modal error dialog indicating that no parking sign was found.
@@ -58,77 +61,111 @@ fun ErrorDialog(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Icon
-                Box(
-                    modifier = Modifier
-                        .size(72.dp)
-                        .background(
-                            color = Color(0xFF4A1A1A),
-                            shape = CircleShape
-                        )
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.no_local_parking),
-                        contentDescription = "No sign found",
-                        tint = Color(0xFFF14B53),
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
+                ErrorIcon()
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Title
-                Text(
-                    text = stringResource(R.string.no_sign_found_title),
-                    color = TextColor,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Center
-                )
+                ErrorTitle()
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Description
-                Text(
-                    text = stringResource(R.string.no_sign_found_description),
-                    color = TextColor.copy(alpha = 0.7f),
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 20.sp,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
+                ErrorDescription()
 
                 Spacer(modifier = Modifier.height(28.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    // Primary button
-                    Button(
-                        onClick = onDismiss,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = ParkingBlue,
-                            contentColor = TextColor
-                        ),
+                    ErrorDialogButton(
+                        onDismiss,
                         modifier = Modifier
                             .weight(1f)
                             .height(48.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = ButtonDefaults.buttonElevation(
-                            defaultElevation = 2.dp,
-                            pressedElevation = 4.dp
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(R.string.ok_button),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
+                    )
                 }
             }
         }
+    }
+}
+
+/**
+ * Displays the error icon inside a circular background.
+ */
+@Composable
+private fun ErrorIcon() {
+    Box(
+        modifier = Modifier
+            .size(72.dp)
+            .background(
+                color = ErrorIconBackground,
+                shape = CircleShape
+            )
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.no_local_parking),
+            contentDescription = "No sign found",
+            tint = ErrorIconColor,
+            modifier = Modifier.size(32.dp)
+        )
+    }
+}
+
+/**
+ * Displays the error dialog title.
+ */
+@Composable
+private fun ErrorTitle() {
+    Text(
+        text = stringResource(R.string.no_sign_found_title),
+        color = TextColor,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.SemiBold,
+        textAlign = TextAlign.Center
+    )
+}
+
+/**
+ * Displays the error dialog description text.
+ */
+@Composable
+private fun ErrorDescription() {
+    Text(
+        text = stringResource(R.string.no_sign_found_description),
+        color = TextColor.copy(alpha = 0.7f),
+        fontSize = 16.sp,
+        textAlign = TextAlign.Center,
+        lineHeight = 20.sp,
+        modifier = Modifier.padding(horizontal = 8.dp)
+    )
+}
+
+/**
+ * Displays the button for dismissing the error dialog.
+ *
+ * @param onDismiss Lambda function to be called when the button is clicked.
+ * @param modifier Modifier to be applied to the button.
+ */
+@Composable
+private fun ErrorDialogButton(onDismiss: () -> Unit, modifier: Modifier) {
+    Button(
+        onClick = onDismiss,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = ParkingBlue,
+            contentColor = TextColor
+        ),
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 2.dp,
+            pressedElevation = 4.dp
+        )
+    ) {
+        Text(
+            text = stringResource(R.string.ok_button),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }

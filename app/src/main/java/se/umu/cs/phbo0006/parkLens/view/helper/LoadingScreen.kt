@@ -24,10 +24,10 @@ import se.umu.cs.phbo0006.parkLens.view.ui.theme.BackgroundColor
 import se.umu.cs.phbo0006.parkLens.R
 
 /**
- * Represents a loading screen UI element.
+ * Displays a loading screen with a background, circular progress indicator,
+ * and an optional loading message.
  *
- * This composable function creates a loading screen with a background,
- * circular progress indicator, and a loading message.
+ * @param showText Whether to display the loading message below the indicator.
  */
 @Composable
 fun LoadingScreen(showText: Boolean) {
@@ -40,22 +40,48 @@ fun LoadingScreen(showText: Boolean) {
             .pointerInput(Unit) {},
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator(
-                color = Color.White,
-                strokeWidth = 6.dp,
-                modifier = Modifier.size(64.dp)
-            )
-            if (showText){
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.loading_screen),
-                    fontSize = 24.sp,
-                    color = Color.White
-                )
-            }
+        LoadingContent(showText)
+    }
+}
+
+/**
+ * Arranges the loading indicator and optional loading text vertically.
+ *
+ * @param showText Whether to display the loading message.
+ */
+@Composable
+private fun LoadingContent(showText: Boolean) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LoadingIndicator()
+        if (showText) {
+            Spacer(modifier = Modifier.height(16.dp))
+            LoadingText()
         }
     }
+}
+
+/**
+ * Shows a circular progress indicator for loading state.
+ */
+@Composable
+private fun LoadingIndicator() {
+    CircularProgressIndicator(
+        color = Color.White,
+        strokeWidth = 6.dp,
+        modifier = Modifier.size(64.dp)
+    )
+}
+
+/**
+ * Displays a loading message text.
+ */
+@Composable
+private fun LoadingText() {
+    Text(
+        text = stringResource(R.string.loading_screen),
+        fontSize = 24.sp,
+        color = Color.White
+    )
 }
